@@ -22,7 +22,12 @@ Install
 - set port in `truffle.js` accordingly
 - `truffle migrate`
 
+### run tests
+```
+truffle test
+```
 
 ### Run backend
-- `npm start`
-
+```
+npm start
+```
