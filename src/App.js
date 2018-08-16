@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import SimpleStorageContract from '../build/contracts/SimpleStorage.json'
+import PalEthe from '../build/contracts/PalEthe.json'
 import getWeb3 from './utils/getWeb3'
 
 import './css/oswald.css'
@@ -12,7 +12,8 @@ class App extends Component {
     super(props)
 
     this.state = {
-      storageValue: 0,
+      account: '0x',
+      num_receipts:0,
       web3: null
     }
   }
@@ -43,46 +44,33 @@ class App extends Component {
      * state management library, but for convenience I've placed them here.
      */
 
-    const contract = require('truffle-contract')
-    const simpleStorage = contract(SimpleStorageContract)
-    simpleStorage.setProvider(this.state.web3.currentProvider)
+    const contract = require('truffle-contract');
+    const PalEtheContract = contract(PalEthe);
+    PalEtheContract.setProvider(this.state.web3.currentProvider);
 
-    // Declaring this for later so we can chain functions on SimpleStorage.
-    var simpleStorageInstance
+    this.state.web3.eth.getAccounts(async (error, accounts) => {
+      console.log(accounts);
+      this.setState({ account: accounts[0]});
+      const pal = await PalEtheContract.deployed();
+      this.setState({ num_receipts: (await pal.num_receipts()).toNumber()});
 
-    // Get accounts.
-    this.state.web3.eth.getAccounts((error, accounts) => {
-      simpleStorage.deployed().then((instance) => {
-        simpleStorageInstance = instance
-
-        // Stores a given value, 5 by default.
-        return simpleStorageInstance.set(5, {from: accounts[0]})
-      }).then((result) => {
-        // Get the value from the contract to prove it worked.
-        return simpleStorageInstance.get.call(accounts[0])
-      }).then((result) => {
-        // Update state with the result.
-        return this.setState({ storageValue: result.c[0] })
-      })
-    })
+    });
   }
 
   render() {
     return (
       <div className="App">
-        <nav className="navbar pure-menu pure-menu-horizontal">
-            <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
-        </nav>
 
         <main className="container">
           <div className="pure-g">
             <div className="pure-u-1-1">
-              <h1>Good to Go!</h1>
-              <p>Your Truffle Box is installed and ready.</p>
-              <h2>Smart Contract Example</h2>
-              <p>If your contracts compiled and migrated successfully, below will show a stored value of 5 (by default).</p>
-              <p>Try changing the value stored on <strong>line 59</strong> of App.js.</p>
-              <p>The stored value is: {this.state.storageValue}</p>
+              <h1>PalEthe</h1>
+              <p>Avtive Account: {this.state.account}</p>
+
+              <p>
+              Total number of receipts: {this.state.num_receipts}
+              </p>
+
             </div>
           </div>
         </main>

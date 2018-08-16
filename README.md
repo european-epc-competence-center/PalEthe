@@ -24,7 +24,7 @@ Install
 
 ### run tests
 ```
-truffle test
+NODE_ENV=development truffle tests
 ```
 
 ### Run backend
