@@ -4,15 +4,15 @@ import 'zeppelin-solidity/contracts/lifecycle/Destructible.sol';
 
 contract PalEthe is Destructible{
 
+    struct PalletReceipt{
+      address initiator;
+      address partner;
+      int balance;
+      bool signed;
+    }
+
   event NewReceipt(uint id, address initiator, address partner);
   event ReceiptSigned(uint id, address initiator, address partner);
-
-  struct PalletReceipt{
-    address initiator;
-    address partner;
-    int balance;
-    bool signed;
-  }
 
   uint public num_receipts;
 
@@ -22,7 +22,8 @@ contract PalEthe is Destructible{
   // keys are ordered <
   mapping ( address => mapping ( address => int) ) internal total_balance;
 
-  function new_receipt(address partner, int balance) public
+  // return id of generated receipt
+  function new_receipt(address partner, int balance) public returns (uint)
   {
   // todo: partner validation
 
@@ -33,12 +34,15 @@ contract PalEthe is Destructible{
     emit NewReceipt(num_receipts, msg.sender, partner);
 
     num_receipts++;
+
+    return num_receipts - 1;
   }
+
 
   function sign_receipt(uint id) public
   {
-    require(msg.sender == pallet_receipt[id].partner); // only partner is allowed to sign
-    require(!pallet_receipt[id].signed); // already signed -> save gas
+    require(msg.sender == pallet_receipt[id].partner, "Only partner is allowed to sign");
+    require(!pallet_receipt[id].signed, "Receipt is already signed.");
 
     // todo: initiator validation
 
