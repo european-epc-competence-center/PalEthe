@@ -76,12 +76,12 @@ class App extends Component {
                my_receipts:[]
              }
            );
-           this.set_event_watch();         }
+           this.set_event_watch();
+         }
        }
      });
 
-
-  }
+   }
 
   set_event_watch()
   {
@@ -112,9 +112,13 @@ class App extends Component {
         {
           console.error("The same receipt id must not exist twice.", result);
         }
-        const new_receipt={
+        var new_receipt={
           id: result.args.id.toNumber(),
-          partner: result.args.partner
+          partner: result.args.partner,
+          button_style: {display:'none'}
+        }
+        if(result.args.partner === this.state.account){
+          new_receipt.button_style = {display:'inline-block'};
         }
         if(result.args.initiator === this.state.account)
         {
@@ -132,6 +136,7 @@ class App extends Component {
         if(result.args.initiator === this.state.account || result.args.partner === this.state.account)
         {
           my_receipts[result.args.id].state = ReceiptStates.completed;
+          my_receipts[result.args.id].button_style = {display:'none'};
         }
         break;
 
@@ -176,7 +181,10 @@ class App extends Component {
               <h1>PalEthe</h1>
               <p>Avtive Account: {this.state.account}</p>
               <p>
-              New receipt:
+              Total number of receipts: {this.state.total_num_receipts}
+              </p>
+
+              <h2>New receipt</h2>
               <table>
               <tbody>
               <tr>
@@ -197,19 +205,23 @@ class App extends Component {
               </tbody>
               </table>
               <button onClick={this.file_receipt}>File Receipt</button>
-              </p>
 
-              <p>
-              Total number of receipts: {this.state.total_num_receipts}
-              </p>
               <h2>Your receipts:</h2>
               <table id="receipts_list">
               <tbody>
               <tr>
+              <th>ID</th>
+              <th>Balance</th>
               <th>Partner</th><th colSpan="2">Status</th>
               </tr>
               {this.state.my_receipts.map((receipt) =>
                 <tr>
+                <td>
+                {receipt.id}
+                </td>
+                <td>
+                {receipt.balance}
+                </td>                
                 <td>
                 {receipt.partner}
                 </td>
@@ -217,7 +229,7 @@ class App extends Component {
                 {receipt.state}
                 </td>
                 <td>
-                <button onClick={() => this.sign_receipt(receipt.id)}>sign</button>
+                <button onClick={() => this.sign_receipt(receipt.id)} style={receipt.button_style}>sign</button>
                 </td>
                 </tr>
               )}

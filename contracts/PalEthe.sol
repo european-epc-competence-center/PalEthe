@@ -11,7 +11,7 @@ contract PalEthe is Destructible{
       bool signed;
     }
 
-  event NewReceipt(uint id, address initiator, address partner);
+  event NewReceipt(uint id, address initiator, address partner, int balance);
   event ReceiptSigned(uint id, address initiator, address partner);
 
   uint public num_receipts;
@@ -31,7 +31,7 @@ contract PalEthe is Destructible{
     pallet_receipt[num_receipts].partner = partner;
     pallet_receipt[num_receipts].balance = balance;
 
-    emit NewReceipt(num_receipts, msg.sender, partner);
+    emit NewReceipt(num_receipts, msg.sender, partner, balance);
 
     num_receipts++;
 
