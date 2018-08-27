@@ -115,6 +115,7 @@ class App extends Component {
         var new_receipt={
           id: result.args.id.toNumber(),
           partner: result.args.partner,
+          balance: result.args.balance.toNumber(),
           button_style: {display:'none'}
         }
         if(result.args.partner === this.state.account){
@@ -221,7 +222,7 @@ class App extends Component {
                 </td>
                 <td>
                 {receipt.balance}
-                </td>                
+                </td>
                 <td>
                 {receipt.partner}
                 </td>
