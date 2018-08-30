@@ -1,6 +1,10 @@
 # PalEthe
 
-Pallet receipts via Ethereum
+This is an add-on project to the GS1 Pallettenschein
+https://www.gs1-germany.de/innovation/trendforschung/blockchain/pilot/
+
+The Participants may publish their current total balance (pairwise) any time. On top of this data, value adding services like ring exchanges can be implemented.
+
 
 Install
 -------

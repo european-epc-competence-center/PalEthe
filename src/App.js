@@ -169,7 +169,7 @@ class App extends Component {
   sign_receipt(id)
   {
     console.log("signing", id);
-    this.state.pal_ethe_instance.sign_receipt(id, {from: this.state.account});
+    this.state.pal_ethe_instance.sign_receipt(id, {from: this.state.account, gas:20000});
   }
 
   render() {
