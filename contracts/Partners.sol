@@ -11,8 +11,8 @@ contract Partners is Destructible{
 
   function register(address adr, string name) public
   {
-    require(registered[adr]==0, "Adress already registered.");
-    
+    require(bytes(names[adr]).length == 0, "Adress already registered.");
+
     registered[num_registered] = adr;
     names[adr] = name;
     emit Register(num_registered, adr, name);
