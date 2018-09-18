@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
+import memoize from "memoize-one";
 
 import './App.css'
+
+
+const DEBUGGING_LOG=false;
 
 const ReceiptStates = Object.freeze({
   "open_outbound":1,
@@ -21,53 +25,60 @@ class App extends Component {
       inputPartner: "",
     }
 
+    // use a memoize to run the function only if called with a different arg than last time
+    this.handle_account_change = memoize((acc) => {
+      console.log("handling account change");
+      this.setState({my_receipts:[]});
+      this.set_event_watch();
+    }).bind(this);
+
+
     this.file_receipt = this.file_receipt.bind(this);
-    this.set_event_watch = this.set_event_watch.bind(this);
-    this.handle_account_change = this.handle_account_change.bind(this);
   }
 
   update(){
     if (this.props.pal_ethe_instance != null)
     {
+      if(DEBUGGING_LOG) console.log("get num receipts");
       this.props.pal_ethe_instance.num_receipts().then( num =>
         {
           this.setState({ total_num_receipts: num.toNumber()});
+          if(DEBUGGING_LOG)console.log("num receipts = ", num.toNumber());
         });
     }
 
     if (this.props.partners_instance != null)
     {
+      if(DEBUGGING_LOG)console.log("get registered");
       this.props.partners_instance.num_registered().then(async num =>{
         var partners = this.state.partners;
-        for(var i = this.state.partners.length; i < num; i++){
+        if(DEBUGGING_LOG)console.log("looping through", num.toNumber(), "registered partners");
+        for(var i = this.state.partners.length; i < num.toNumber(); i++){
           const adr = await this.props.partners_instance.registered(i);
+          const name = await this.props.partners_instance.names(adr);
           partners[i]=
           {
-            name: await this.props.partners_instance.names[adr],
+            name: name,
             address: adr
           };
         }
         this.setState({partners: partners});
-        console.log("partners", partners);
+        if(DEBUGGING_LOG)console.log("partners", partners);
       });
     }
 
    }
 
-   handle_account_change()
-   {
-     this.setState({my_receipts:[]});
-     this.set_event_watch();
-   }
-
-  set_event_watch()
+  get_my_receipts(pal_ethe_instance)
   {
-    if (this.props.pal_ethe_instance == null || this.props.account == null)
+    if (pal_ethe_instance == null || this.props.account == null)
     {
-      return;
+      return [];
     }
 
-    //console.log("registering event whatch");
+    var my_receipts = [];
+
+    console.log("registering event whatch");
     this.props.pal_ethe_instance.allEvents({fromBlock: 0, toBlock: 'latest'}, (error, result) =>
     {
       //console.log(result);
@@ -81,7 +92,6 @@ class App extends Component {
         console.log("Removed event: ", result);
         return;
       }
-      var my_receipts = this.state.my_receipts;
 
       switch(result.event){
         case "NewReceipt":
@@ -121,8 +131,9 @@ class App extends Component {
         default:
         console.error("Unknown event: ", result);
       }
-      this.setState({my_receipts : my_receipts});
     });
+
+    return my_receipts;
   }
 
 
@@ -135,6 +146,12 @@ class App extends Component {
 
   componentWillUnmount() {
     clearInterval(this.timer);
+  }
+
+
+  static getDerivedStateFromProps(props, state) {
+    console.log("derived state from props:", props);
+    this.handle_account_change(props.account);
   }
 
   file_receipt()
@@ -180,7 +197,7 @@ class App extends Component {
               <select id="title" name="title" value={this.state.inputPartner} onChange={evt => this.setState({inputPartner: evt.target.value})}>
               <option value="" selected>Please choose</option>
               {this.state.partners.map((partner) =>
-                <option key="{partner.address}" value="{partner.address}" selected>{partner.name}</option>
+                <option key={partner.address} value={partner.address} selected>{partner.name}</option>
               )}
               </select>
 

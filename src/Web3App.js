@@ -43,14 +43,11 @@ class Web3App extends Component {
     if (this.state.pal_ethe_instance == null)
     {
       const PalEtheContract = contract(PalEthe);
-      PalEtheContract.setProvider(this.props.web3.currentProvider);
+      PalEtheContract.setProvider(this.state.web3.currentProvider);
       PalEtheContract.deployed().then(async instance =>{
         this.setState({
           pal_ethe_instance : instance
         });
-        if(this.child.handle_account_change){
-          this.child.handle_account_change();
-        }
       });
     }
 
@@ -58,9 +55,6 @@ class Web3App extends Component {
       if (accounts && accounts.length > 0 && this.state.account !== accounts[0])
       {
         this.setState({account: accounts[0]});
-        if(this.child.handle_account_change){
-          this.child.handle_account_change();
-        }
       }
     });
 
@@ -73,6 +67,7 @@ class Web3App extends Component {
   componentWillUnmount() {
     clearInterval(this.timer);
   }
+
 
   render() {
     return (
