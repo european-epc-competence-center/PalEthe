@@ -6,13 +6,15 @@ https://www.gs1-germany.de/innovation/trendforschung/blockchain/pilot/
 The Participants may publish their current total balance (pairwise) any time. On top of this data, value adding services like ring exchanges can be implemented.
 
 
-Install
--------
+Run
+---
+
+- clone this repo
+
+The simplest way to get started is just 'make' or 'make clean start' after upgrading. If you want more controll:
 
 ### Once
 - Install truffle `npm i -g truffle`
-- clone this repo
-
 
 ### Update and Compile
 - `cd PalEthe`
