@@ -12,6 +12,73 @@ const ReceiptStates = Object.freeze({
   "completed":3
 });
 
+
+function get_my_receipts(pal_ethe_instance, account)
+  {
+    if (pal_ethe_instance == null || account == null)
+    {
+      return [];
+    }
+
+    var my_receipts = [];
+
+    pal_ethe_instance.allEvents({fromBlock: 0, toBlock: 'latest'}, (error, result) =>
+    {
+      //console.log(result);
+      if(error)
+      {
+        console.error("Error getting event: ", error);
+        return;
+      }
+      if(result.removed)
+      {
+        console.log("Removed event: ", result);
+        return;
+      }
+
+      switch(result.event){
+        case "NewReceipt":
+        if(my_receipts[result.args.id])
+        {
+          console.error("The same receipt id must not exist twice.", result);
+        }
+        var new_receipt={
+          id: result.args.id.toNumber(),
+          partner: result.args.partner,
+          balance: result.args.balance.toNumber(),
+          button_style: {display:'none'}
+        }
+        if(result.args.partner === account){
+          new_receipt.button_style = {display:'inline-block'};
+        }
+        if(result.args.initiator === account)
+        {
+          my_receipts[result.args.id] = new_receipt;
+          my_receipts[result.args.id].state = ReceiptStates.open_outbound;
+        }
+        else if (result.args.partner === account)
+        {
+          my_receipts[result.args.id] = new_receipt;
+          my_receipts[result.args.id].state = ReceiptStates.open_inbound;
+        }// else: we are not involved
+        break;
+
+        case "ReceiptSigned":
+        if(result.args.initiator === account || result.args.partner === account)
+        {
+          my_receipts[result.args.id].state = ReceiptStates.completed;
+          my_receipts[result.args.id].button_style = {display:'none'};
+        }
+        break;
+
+        default:
+        console.error("Unknown event: ", result);
+      }
+    });
+
+    return my_receipts;
+  }
+
 class App extends Component {
 
   constructor(props) {
@@ -23,14 +90,12 @@ class App extends Component {
       partners:[],
       inputBalance: 0,
       inputPartner: "",
+// use a memoize to run the function only if called with a different arg than last time
+      handle_account_change: memoize((contract, account) => {
+        console.log("handling account change");
+        return get_my_receipts(contract, account);
+      })
     }
-
-    // use a memoize to run the function only if called with a different arg than last time
-    this.handle_account_change = memoize((acc) => {
-      console.log("handling account change");
-      this.setState({my_receipts:[]});
-      this.set_event_watch();
-    }).bind(this);
 
 
     this.file_receipt = this.file_receipt.bind(this);
@@ -69,73 +134,6 @@ class App extends Component {
 
    }
 
-  get_my_receipts(pal_ethe_instance)
-  {
-    if (pal_ethe_instance == null || this.props.account == null)
-    {
-      return [];
-    }
-
-    var my_receipts = [];
-
-    console.log("registering event whatch");
-    this.props.pal_ethe_instance.allEvents({fromBlock: 0, toBlock: 'latest'}, (error, result) =>
-    {
-      //console.log(result);
-      if(error)
-      {
-        console.error("Error getting event: ", error);
-        return;
-      }
-      if(result.removed)
-      {
-        console.log("Removed event: ", result);
-        return;
-      }
-
-      switch(result.event){
-        case "NewReceipt":
-        if(my_receipts[result.args.id])
-        {
-          console.error("The same receipt id must not exist twice.", result);
-        }
-        var new_receipt={
-          id: result.args.id.toNumber(),
-          partner: result.args.partner,
-          balance: result.args.balance.toNumber(),
-          button_style: {display:'none'}
-        }
-        if(result.args.partner === this.props.account){
-          new_receipt.button_style = {display:'inline-block'};
-        }
-        if(result.args.initiator === this.props.account)
-        {
-          my_receipts[result.args.id] = new_receipt;
-          my_receipts[result.args.id].state = ReceiptStates.open_outbound;
-        }
-        else if (result.args.partner === this.props.account)
-        {
-          my_receipts[result.args.id] = new_receipt;
-          my_receipts[result.args.id].state = ReceiptStates.open_inbound;
-        }// else: we are not involved
-        break;
-
-        case "ReceiptSigned":
-        if(result.args.initiator === this.props.account || result.args.partner === this.props.account)
-        {
-          my_receipts[result.args.id].state = ReceiptStates.completed;
-          my_receipts[result.args.id].button_style = {display:'none'};
-        }
-        break;
-
-        default:
-        console.error("Unknown event: ", result);
-      }
-    });
-
-    return my_receipts;
-  }
-
 
   componentDidMount() {
     this.timer = setInterval(
@@ -151,7 +149,7 @@ class App extends Component {
 
   static getDerivedStateFromProps(props, state) {
     console.log("derived state from props:", props);
-    this.handle_account_change(props.account);
+    return state.handle_account_change(props.pal_ethe_instance, props.account);
   }
 
   file_receipt()
