@@ -3,7 +3,10 @@ PASSWDFILE = geth/chaindata/acc_passwd
 .PHONY: clean install run_miner
 
 start: migrate
-	npm start
+	-npm start
+
+stop:
+	-@killall geth npm node
 
 migrate: build start_miner
 	truffle migrate --network geth_dev

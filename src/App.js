@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import memoize from "memoize-one";
 
 import './App.css'
 
@@ -17,14 +16,14 @@ function get_my_receipts(pal_ethe_instance, account)
   {
     if (pal_ethe_instance == null || account == null)
     {
+      console.log("get receipts failed", pal_ethe_instance, account);
       return [];
     }
 
     var my_receipts = [];
-
-    pal_ethe_instance.allEvents({fromBlock: 0, toBlock: 'latest'}, (error, result) =>
-    {
-      //console.log(result);
+    if(DEBUGGING_LOG) console.log("Getting all events from ", pal_ethe_instance);
+    pal_ethe_instance.allEvents({fromBlock: 0, toBlock: 'latest'}, (error, result) => {
+      if(DEBUGGING_LOG) console.log(result);
       if(error)
       {
         console.error("Error getting event: ", error);
@@ -48,18 +47,18 @@ function get_my_receipts(pal_ethe_instance, account)
           balance: result.args.balance.toNumber(),
           button_style: {display:'none'}
         }
-        if(result.args.partner === account){
-          new_receipt.button_style = {display:'inline-block'};
-        }
         if(result.args.initiator === account)
         {
           my_receipts[result.args.id] = new_receipt;
           my_receipts[result.args.id].state = ReceiptStates.open_outbound;
+          if(DEBUGGING_LOG) console.log("outbound receipt: ", new_receipt);
         }
-        else if (result.args.partner === account)
+        if (result.args.partner === account)
         {
           my_receipts[result.args.id] = new_receipt;
           my_receipts[result.args.id].state = ReceiptStates.open_inbound;
+          new_receipt.button_style = {display:'inline-block'};
+          if(DEBUGGING_LOG) console.log("inbound receipt: ", new_receipt);        
         }// else: we are not involved
         break;
 
@@ -68,6 +67,7 @@ function get_my_receipts(pal_ethe_instance, account)
         {
           my_receipts[result.args.id].state = ReceiptStates.completed;
           my_receipts[result.args.id].button_style = {display:'none'};
+if(DEBUGGING_LOG) console.log("Signed receipt: ", my_receipts[result.args.id]);
         }
         break;
 
@@ -90,15 +90,12 @@ class App extends Component {
       partners:[],
       inputBalance: 0,
       inputPartner: "",
-// use a memoize to run the function only if called with a different arg than last time
-      handle_account_change: memoize((contract, account) => {
-        console.log("handling account change");
-        return get_my_receipts(contract, account);
-      })
+      old_account: null
     }
 
 
     this.file_receipt = this.file_receipt.bind(this);
+    this.refresh_receipts = this.refresh_receipts.bind(this);
   }
 
   update(){
@@ -134,7 +131,6 @@ class App extends Component {
 
    }
 
-
   componentDidMount() {
     this.timer = setInterval(
       () => this.update(),
@@ -148,20 +144,30 @@ class App extends Component {
 
 
   static getDerivedStateFromProps(props, state) {
-    console.log("derived state from props:", props);
-    return state.handle_account_change(props.pal_ethe_instance, props.account);
+    if(state.old_account === props.account)
+      return {};
+    console.log("handling account change: ", props.account);
+    return {
+      old_account: props.account,
+      my_receipts: get_my_receipts(props.pal_ethe_instance, props.account)
+    };  
+  }
+
+  refresh_receipts()
+  {
+    this.setState({old_account:null});
   }
 
   file_receipt()
   {
     console.log("new receipts", this.props.account, this.state.inputPartner, this.state.inputBalance)
-    this.props.pal_ethe_instance.new_receipt(this.state.inputPartner, this.state.inputBalance, {from: this.props.account});
+    this.props.pal_ethe_instance.new_receipt(this.state.inputPartner, this.state.inputBalance, {from: this.props.account, gas:220000});
   }
 
   sign_receipt(id)
   {
     console.log("signing", id);
-    this.props.pal_ethe_instance.sign_receipt(id, {from: this.props.account});
+    this.props.pal_ethe_instance.sign_receipt(id, {from: this.props.account, gas:220000});
   }
 
   render() {
