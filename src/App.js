@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
-import PalEthe from '../build/contracts/PalEthe.json'
-import getWeb3 from './utils/getWeb3'
 
-import './css/oswald.css'
-import './css/open-sans.css'
-import './css/pure-min.css'
 import './App.css'
+
+
+const DEBUGGING_LOG=false;
 
 const ReceiptStates = Object.freeze({
   "open_outbound":1,
@@ -13,87 +11,19 @@ const ReceiptStates = Object.freeze({
   "completed":3
 });
 
-class App extends Component {
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      account: null,
-      my_receipts: [],
-      total_num_receipts : 0,
-      web3: null,
-      pal_ethe_instance : null,
-      inputBalance:0,
-      inputPartner: ""
-    }
-
-    this.file_receipt = this.file_receipt.bind(this);
-    this.set_event_watch = this.set_event_watch.bind(this);
-  }
-
-  componentWillMount() {
-    // Get network provider and web3 instance.
-    // See utils/getWeb3 for more info.
-
-    getWeb3
-    .then(results => {
-      this.setState({
-        web3: results.web3
-      });
-
-    });
-
-  }
-
-  update(){
-
-    if (this.state.pal_ethe_instance == null)
-    {
-      const contract = require('truffle-contract');
-      const PalEtheContract = contract(PalEthe);
-      PalEtheContract.setProvider(this.state.web3.currentProvider);
-      PalEtheContract.deployed().then(async pal =>{
-        this.setState({
-          pal_ethe_instance : pal
-        });
-        this.set_event_watch();
-      });
-    }else {
-      this.state.pal_ethe_instance.num_receipts().then( num =>
-        {
-          this.setState({ total_num_receipts: num.toNumber()});
-        });
-    }
-
-    this.state.web3.eth.getAccounts(async (error, accounts) => {
-      if (accounts && accounts.length > 0){
-        if(this.state.account !== accounts[0])
-        {
-          this.setState(
-            {
-               account: accounts[0],
-               my_receipts:[]
-             }
-           );
-           this.set_event_watch();
-         }
-       }
-     });
-
-   }
-
-  set_event_watch()
+function get_my_receipts(pal_ethe_instance, account)
   {
-    if (this.state.pal_ethe_instance == null || this.state.account == null )
+    if (pal_ethe_instance == null || account == null)
     {
-      return;
+      console.log("get receipts failed", pal_ethe_instance, account);
+      return [];
     }
 
-    //console.log("registering event whatch");
-    this.state.pal_ethe_instance.allEvents({fromBlock: 0, toBlock: 'latest'}, (error, result) =>
-    {
-      //console.log(result);
+    var my_receipts = [];
+    if(DEBUGGING_LOG) console.log("Getting all events from ", pal_ethe_instance);
+    pal_ethe_instance.allEvents({fromBlock: 0, toBlock: 'latest'}, (error, result) => {
+      if(DEBUGGING_LOG) console.log(result);
       if(error)
       {
         console.error("Error getting event: ", error);
@@ -104,7 +34,6 @@ class App extends Component {
         console.log("Removed event: ", result);
         return;
       }
-      var my_receipts = this.state.my_receipts;
 
       switch(result.event){
         case "NewReceipt":
@@ -118,36 +47,89 @@ class App extends Component {
           balance: result.args.balance.toNumber(),
           button_style: {display:'none'}
         }
-        if(result.args.partner === this.state.account){
-          new_receipt.button_style = {display:'inline-block'};
-        }
-        if(result.args.initiator === this.state.account)
+        if(result.args.initiator === account)
         {
           my_receipts[result.args.id] = new_receipt;
           my_receipts[result.args.id].state = ReceiptStates.open_outbound;
+          if(DEBUGGING_LOG) console.log("outbound receipt: ", new_receipt);
         }
-        else if (result.args.partner === this.state.account)
+        if (result.args.partner === account)
         {
           my_receipts[result.args.id] = new_receipt;
           my_receipts[result.args.id].state = ReceiptStates.open_inbound;
+          new_receipt.button_style = {display:'inline-block'};
+          if(DEBUGGING_LOG) console.log("inbound receipt: ", new_receipt);        
         }// else: we are not involved
         break;
 
         case "ReceiptSigned":
-        if(result.args.initiator === this.state.account || result.args.partner === this.state.account)
+        if(result.args.initiator === account || result.args.partner === account)
         {
           my_receipts[result.args.id].state = ReceiptStates.completed;
           my_receipts[result.args.id].button_style = {display:'none'};
+if(DEBUGGING_LOG) console.log("Signed receipt: ", my_receipts[result.args.id]);
         }
         break;
 
         default:
         console.error("Unknown event: ", result);
       }
-      this.setState({my_receipts : my_receipts});
     });
+
+    return my_receipts;
   }
 
+class App extends Component {
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      my_receipts: [],
+      total_num_receipts : 0,
+      partners:[],
+      inputBalance: 0,
+      inputPartner: "",
+      old_account: null
+    }
+
+
+    this.file_receipt = this.file_receipt.bind(this);
+    this.refresh_receipts = this.refresh_receipts.bind(this);
+  }
+
+  update(){
+    if (this.props.pal_ethe_instance != null)
+    {
+      if(DEBUGGING_LOG) console.log("get num receipts");
+      this.props.pal_ethe_instance.num_receipts().then( num =>
+        {
+          this.setState({ total_num_receipts: num.toNumber()});
+          if(DEBUGGING_LOG)console.log("num receipts = ", num.toNumber());
+        });
+    }
+
+    if (this.props.partners_instance != null)
+    {
+      if(DEBUGGING_LOG)console.log("get registered");
+      this.props.partners_instance.num_registered().then(async num =>{
+        var partners = this.state.partners;
+        if(DEBUGGING_LOG)console.log("looping through", num.toNumber(), "registered partners");
+        for(var i = this.state.partners.length; i < num.toNumber(); i++){
+          const adr = await this.props.partners_instance.registered(i);
+          const name = await this.props.partners_instance.names(adr);
+          partners[i]=
+          {
+            name: name,
+            address: adr
+          };
+        }
+        this.setState({partners: partners});
+        if(DEBUGGING_LOG)console.log("partners", partners);
+      });
+    }
+
+   }
 
   componentDidMount() {
     this.timer = setInterval(
@@ -160,16 +142,32 @@ class App extends Component {
     clearInterval(this.timer);
   }
 
+
+  static getDerivedStateFromProps(props, state) {
+    if(state.old_account === props.account)
+      return {};
+    console.log("handling account change: ", props.account);
+    return {
+      old_account: props.account,
+      my_receipts: get_my_receipts(props.pal_ethe_instance, props.account)
+    };  
+  }
+
+  refresh_receipts()
+  {
+    this.setState({old_account:null});
+  }
+
   file_receipt()
   {
-    console.log("new receipts", this.state.account, this.state.inputPartner, this.state.inputBalance)
-    this.state.pal_ethe_instance.new_receipt(this.state.inputPartner, this.state.inputBalance, {from: this.state.account});
+    console.log("new receipts", this.props.account, this.state.inputPartner, this.state.inputBalance)
+    this.props.pal_ethe_instance.new_receipt(this.state.inputPartner, this.state.inputBalance, {from: this.props.account, gas:220000});
   }
 
   sign_receipt(id)
   {
     console.log("signing", id);
-    this.state.pal_ethe_instance.sign_receipt(id, {from: this.state.account});
+    this.props.pal_ethe_instance.sign_receipt(id, {from: this.props.account, gas:220000});
   }
 
   render() {
@@ -180,7 +178,7 @@ class App extends Component {
           <div className="pure-g">
             <div className="pure-u-1-1">
               <h1>PalEthe</h1>
-              <p>Avtive Account: {this.state.account}</p>
+              <p>Avtive Account: {this.props.account}</p>
               <p>
               Total number of receipts: {this.state.total_num_receipts}
               </p>
@@ -200,7 +198,13 @@ class App extends Component {
               <input value={this.state.inputBalance} type="number" onChange={evt => this.setState({inputBalance: evt.target.value})}/>
               </td>
               <td>
-              <input size="64" value={this.state.inputPartner} onChange={evt => this.setState({inputPartner: evt.target.value})}/>
+              <select id="title" name="title" value={this.state.inputPartner} onChange={evt => this.setState({inputPartner: evt.target.value})}>
+              <option value="" selected>Please choose</option>
+              {this.state.partners.map((partner) =>
+                <option key={partner.address} value={partner.address} selected>{partner.name}</option>
+              )}
+              </select>
+
               </td>
               </tr>
               </tbody>

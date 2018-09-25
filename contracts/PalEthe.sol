@@ -25,7 +25,7 @@ contract PalEthe is Destructible{
   // return id of generated receipt
   function new_receipt(address partner, int balance) public returns (uint)
   {
-  // todo: partner validation
+  // todo: partner validation?
 
     pallet_receipt[num_receipts].initiator = msg.sender;
     pallet_receipt[num_receipts].partner = partner;
@@ -44,7 +44,7 @@ contract PalEthe is Destructible{
     require(msg.sender == pallet_receipt[id].partner, "Only partner is allowed to sign");
     require(!pallet_receipt[id].signed, "Receipt is already signed.");
 
-    // todo: initiator validation
+    // todo: initiator validation?
 
     pallet_receipt[id].signed = true;
     emit ReceiptSigned(id, pallet_receipt[id].initiator, pallet_receipt[id].partner);
@@ -61,7 +61,8 @@ contract PalEthe is Destructible{
       d = -d;
     }
 
-    total_balance[a1][a2] += d;
+    // use += here if the receipt contains a delta instead of publishing a total
+    total_balance[a1][a2] = d;
 
   }
 
