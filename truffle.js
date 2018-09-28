@@ -6,7 +6,7 @@ module.exports = {
   // to customize your Truffle configuration!
 
   networks: {
-    "development": {
+    "ganache": {
       host: "127.0.0.1",
       port: 7545,
       network_id: "*" // Match any network id
@@ -14,6 +14,11 @@ module.exports = {
     "geth_dev": {
       host: "127.0.0.1",
       port: 8545,
+      network_id:"*"
+    },
+    "truffle_dev": {
+      host: "127.0.0.1",
+      port: 9545,
       network_id:"*"
     }
   }

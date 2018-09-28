@@ -8,6 +8,7 @@ class Register extends Component {
     this.state = {
       inputName: "",
       inputAddress: "",
+      message:"",
     }
     this.register_partner = this.register_partner.bind(this);
   }
@@ -15,7 +16,15 @@ class Register extends Component {
   register_partner()
   {
     console.log("register: ", this.state.inputAddress, this.state.inputName);
+    // todo: error handling (e.g. registering the same adress twice)
     this.props.partners_instance.register(this.state.inputAddress, this.state.inputName, {from: this.props.account});
+    this.setState(
+      {
+        inputAddress:"",
+        inputName:"",
+        message:"Registering " + this.state.inputAddress + " as " + this.state.inputName + " ...",
+      }
+    );
   }
 
 
@@ -41,7 +50,12 @@ class Register extends Component {
               </td></tr>
               </tbody>
               </table>
+              <p>
               <button onClick={this.register_partner}>register</button>
+              </p>
+              <p>
+              {this.state.message}
+              </p>
               </div>
           </div>
         </main>
