@@ -21,7 +21,8 @@ class Web3App extends Component {
 
     this.state = {
       web3: null,
-      account: 0,
+      account: null,
+      accounts_list: [],
       pal_ethe_instance : null,
       partners_instance : null,
       partners:[],
@@ -70,9 +71,12 @@ class Web3App extends Component {
     }
 
     this.state.web3.eth.getAccounts(async (error, accounts) => {
-      if (accounts && accounts.length > 0 && this.state.account !== accounts[0])
+      if (accounts && accounts.length > 0)
       {
-        this.setState({account: accounts[0]});
+        this.setState({accounts_list: accounts});
+        if(!this.state.account || this.state.account === 0){
+          this.setState({account: accounts[0]});
+        }
       }
     });
 
@@ -117,7 +121,13 @@ class Web3App extends Component {
   render() {
     return (
       <div>
-      <p>Avtive Account: {this.get_name(this.state.account)} ( {this.state.account} )</p>
+      <p>Avtive Account:
+      <select value={this.state.account} onChange={evt => this.setState({account: evt.target.value})}>
+      {this.state.accounts_list.map((account) =>
+        <option key={account} value={account}>{this.get_name(account)} ( {account} )</option>
+      )}
+      </select>
+      </p>
       <Tabs>
       <TabList>
       <Tab>Receipts</Tab>
@@ -135,6 +145,7 @@ class Web3App extends Component {
       <TabPanel>
       <Register
         account={this.state.account}
+        accounts_list={this.state.accounts_list}
         partners={this.state.partners}
         partners_instance={this.state.partners_instance}
       />

@@ -11,22 +11,34 @@ class Register extends Component {
       message:"",
     }
     this.register_partner = this.register_partner.bind(this);
+    this.register_all_accounts = this.register_all_accounts.bind(this);
   }
 
-  register_partner()
+  register_partner(account, name)
   {
-    console.log("register: ", this.state.inputAddress, this.state.inputName);
+    if(!account) account=this.state.inputAddress;
+    if(!name) name= this.state.inputName;
+    console.log("register: ", account, name);
     // todo: error handling (e.g. registering the same adress twice)
-    this.props.partners_instance.register(this.state.inputAddress, this.state.inputName, {from: this.props.account});
+    this.props.partners_instance.register(account, name, {from: this.props.account});
     this.setState(
       {
         inputAddress:"",
         inputName:"",
-        message:"Registering " + this.state.inputAddress + " as " + this.state.inputName + " ...",
+        message:"Registering " + account + " as " + name + " ...",
       }
     );
   }
 
+  // dev helpter
+  register_all_accounts()
+  {
+    var i=0;
+    this.props.accounts_list.forEach((account) => {
+      this.register_partner(account, "EECC"+i);
+      i++;
+    });
+  }
 
 
   render() {
@@ -44,7 +56,7 @@ class Register extends Component {
               )}
               </ul>
 
-              <h1>Register Partner New</h1>
+              <h1>Register New Partner</h1>
               <table>
               <tbody>
               <tr>
@@ -64,6 +76,12 @@ class Register extends Component {
               </p>
               <p>
               {this.state.message}
+              </p>
+              <h1>Bootstrap</h1>
+              <p>
+              <button onClick={this.register_all_accounts}>
+              Register all known accounts
+              </button>
               </p>
               </div>
           </div>

@@ -56,8 +56,10 @@ function get_my_receipts(pal_ethe_instance, account)
         if (result.args.partner === account)
         {
           my_receipts[result.args.id] = new_receipt;
+          my_receipts[result.args.id].partner = result.args.initiator;
+          my_receipts[result.args.id].balance = -my_receipts[result.args.id].balance;
           my_receipts[result.args.id].state = ReceiptStates.open_inbound;
-          new_receipt.button_style = {display:'inline-block'};
+          my_receipts[result.args.id].button_style = {display:'inline-block'};
           if(DEBUGGING_LOG) console.log("inbound receipt: ", new_receipt);
         }// else: we are not involved
         break;
@@ -172,9 +174,9 @@ class App extends Component {
               <tbody>
               <tr>
               <th>
-              balance
+              My Debt
               </th><th>
-              partner
+              Partner
               </th>
               </tr>
               <tr>
@@ -185,7 +187,7 @@ class App extends Component {
               <select id="title" name="title" value={this.state.inputPartner} onChange={evt => this.setState({inputPartner: evt.target.value})}>
               <option value="" selected>Please choose</option>
               {this.props.partners.map((partner) =>
-                <option key={partner.address} value={partner.address} selected>{partner.name}</option>
+                <option key={partner.address} value={partner.address}>{partner.name}</option>
               )}
               </select>
 
@@ -200,7 +202,7 @@ class App extends Component {
               <tbody>
               <tr>
               <th>ID</th>
-              <th>Balance</th>
+              <th>My Debt</th>
               <th>Partner</th><th colSpan="2">Status</th>
               </tr>
               {this.state.my_receipts.map((receipt) =>

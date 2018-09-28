@@ -27,14 +27,16 @@ class Balance extends Component {
           {
             direction = "<";
           }
-          total_balance.push(
-            {
-              from: name1,
-              to: name2,
-              balance: balance,
-              print: name1 + " -" + direction + "- " + Math.abs(balance) + " -" + direction + "- " + name2
-            }
-          );
+          if (balance != 0) {
+            total_balance.push(
+              {
+                from: name1,
+                to: name2,
+                balance: balance,
+                print: name1 + " -" + direction + "- " + Math.abs(balance) + " -" + direction + "- " + name2
+              }
+            );
+          }
         }
       }
       this.setState({total_balance:total_balance});
