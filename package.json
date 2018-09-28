@@ -58,9 +58,10 @@
     "dotenv": "^2.0.0",
     "memoize": "^0.1.1",
     "memoize-one": "^4.0.2",
+    "openzeppelin-solidity": "^1.12.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
-    "openzeppelin-solidity": "^1.12.0"
+    "react-tabs": "^2.3.0"
   },
   "scripts": {
     "start": "node scripts/start.js",

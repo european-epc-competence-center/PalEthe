@@ -35,6 +35,6 @@ code {
 }
 
 
-table > tbody > tr > td {
+table > tbody > tr > td, table > tbody > tr > th {
   padding: 5px;
 }

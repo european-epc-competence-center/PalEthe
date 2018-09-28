@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+
 import PalEthe from '../build/contracts/PalEthe.json'
 import Partners from '../build/contracts/Partners.json'
 
@@ -8,6 +10,9 @@ import App from './App'
 
 import getWeb3 from './utils/getWeb3'
 
+const DEBUGGING_LOG=false;
+
+
 class Web3App extends Component {
 
   constructor(props) {
@@ -15,12 +20,24 @@ class Web3App extends Component {
 
     this.state = {
       web3: null,
-      account: null,
+      account: 0,
       pal_ethe_instance : null,
       partners_instance : null,
+      partners:[],
+      address_to_name: {},
     }
 
-    this.child = React.createRef();
+    this.get_name = this.get_name.bind(this);
+  }
+
+  // map address to name, if known, otherwise return address
+  get_name(address)
+  {
+    if(address && this.state.address_to_name[address])
+    {
+      return this.state.address_to_name[address];
+    }
+    return address;
   }
 
   componentWillMount() {
@@ -58,6 +75,33 @@ class Web3App extends Component {
       }
     });
 
+    if (this.state.partners_instance != null)
+    {
+      if(DEBUGGING_LOG)console.log("get registered");
+      this.state.partners_instance.num_registered().then(async num =>{
+        var partners = this.state.partners;
+        var address_to_name = this.state.address_to_name;
+        if(DEBUGGING_LOG)console.log("foud ", num.toNumber(), " registered partners");
+        // only append new partners:
+        for(var i = this.state.partners.length; i < num.toNumber(); i++)
+        {
+          const adr = await this.state.partners_instance.registered(i);
+          const name = await this.state.partners_instance.names(adr);
+          partners[i]=
+          {
+            name: name,
+            address: adr
+          };
+          address_to_name[adr] = name;
+        }
+        this.setState({
+          partners: partners,
+          address_to_name: address_to_name,
+        });
+        if(DEBUGGING_LOG)console.log("partners: ", partners);
+      });
+    }
+
   }
 
   componentDidMount() {
@@ -71,22 +115,31 @@ class Web3App extends Component {
 
   render() {
     return (
-      <section>
-      <section>
-        <App
-          account={this.state.account}
-          partners_instance={this.state.partners_instance}
-          pal_ethe_instance={this.state.pal_ethe_instance}
-          ref={this.child}
-        />
-      </section>
-      <section>
-        <Register
-          account={this.state.account}
-          partners_instance={this.state.partners_instance}
-        />
-      </section>
-      </section>
+      <div>
+      <p>Avtive Account: {this.get_name(this.state.account)} ( {this.state.account} )</p>
+      <Tabs>
+      <TabList>
+      <Tab>Receipts</Tab>
+      <Tab>Partners</Tab>
+      </TabList>
+      <TabPanel>
+      <App
+        account={this.state.account}
+        partners_instance={this.state.partners_instance}
+        pal_ethe_instance={this.state.pal_ethe_instance}
+        partners={this.state.partners}
+        get_name={this.get_name}
+      />
+      </TabPanel>
+      <TabPanel>
+      <Register
+        account={this.state.account}
+        partners={this.state.partners}
+        partners_instance={this.state.partners_instance}
+      />
+      </TabPanel>
+      </Tabs>
+      </div>
     );
   }
 }

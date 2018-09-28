@@ -28,6 +28,7 @@ class Register extends Component {
   }
 
 
+
   render() {
     return (
       <div className="Regsiter">
@@ -35,7 +36,15 @@ class Register extends Component {
         <main className="container">
           <div className="pure-g">
             <div className="pure-u-1-1">
-              <h1>Register Partners</h1>
+
+              <h1>Registered Partners</h1>
+              <ul>
+              {this.props.partners.map((partner) =>
+                <li key={partner.address}> {partner.name} ( {partner.address} )</li>
+              )}
+              </ul>
+
+              <h1>Register Partner New</h1>
               <table>
               <tbody>
               <tr>
