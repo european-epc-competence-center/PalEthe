@@ -7,6 +7,7 @@ import Partners from '../build/contracts/Partners.json'
 
 import Register from './Register'
 import App from './App'
+import Balance from './Balance'
 
 import getWeb3 from './utils/getWeb3'
 
@@ -121,11 +122,11 @@ class Web3App extends Component {
       <TabList>
       <Tab>Receipts</Tab>
       <Tab>Partners</Tab>
+      <Tab>Total Balance</Tab>
       </TabList>
       <TabPanel>
       <App
         account={this.state.account}
-        partners_instance={this.state.partners_instance}
         pal_ethe_instance={this.state.pal_ethe_instance}
         partners={this.state.partners}
         get_name={this.get_name}
@@ -136,6 +137,14 @@ class Web3App extends Component {
         account={this.state.account}
         partners={this.state.partners}
         partners_instance={this.state.partners_instance}
+      />
+      </TabPanel>
+      <TabPanel>
+      <Balance
+        account={this.state.account}
+        pal_ethe_instance={this.state.pal_ethe_instance}
+        partners={this.state.partners}
+        get_name={this.get_name}
       />
       </TabPanel>
       </Tabs>
