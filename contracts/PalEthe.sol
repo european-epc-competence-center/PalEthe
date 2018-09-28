@@ -61,8 +61,9 @@ contract PalEthe is Destructible{
       d = -d;
     }
 
-    // use += here if the receipt contains a delta instead of publishing a total
-    total_balance[a1][a2] = d;
+    // use '+=' here: the receipt contains a delta
+    // use '=' here: the receipt publishes the total
+    total_balance[a1][a2] += d;
 
   }
 
