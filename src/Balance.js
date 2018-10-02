@@ -27,7 +27,7 @@ class Balance extends Component {
           {
             direction = "<";
           }
-          if (balance != 0) {
+          if (balance !== 0) {
             total_balance.push(
               {
                 from: name1,

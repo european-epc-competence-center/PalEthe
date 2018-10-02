@@ -14,7 +14,7 @@ class Register extends Component {
     this.register_all_accounts = this.register_all_accounts.bind(this);
   }
 
-  register_partner(account, name)
+  register_partner(evt, account, name)
   {
     if(!account) account=this.state.inputAddress;
     if(!name) name= this.state.inputName;
@@ -35,7 +35,7 @@ class Register extends Component {
   {
     var i=0;
     this.props.accounts_list.forEach((account) => {
-      this.register_partner(account, "EECC"+i);
+      this.register_partner(null, account, "EECC"+i);
       i++;
     });
   }

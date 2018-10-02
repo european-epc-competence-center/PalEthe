@@ -4,10 +4,13 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import PalEthe from '../build/contracts/PalEthe.json'
 import Partners from '../build/contracts/Partners.json'
+import Announce from '../build/contracts/Announce.json'
+
 
 import Register from './Register'
 import App from './App'
 import Balance from './Balance'
+import Exchange from './Exchange'
 
 import getWeb3 from './utils/getWeb3'
 
@@ -25,6 +28,7 @@ class Web3App extends Component {
       accounts_list: [],
       pal_ethe_instance : null,
       partners_instance : null,
+      announce_instance: null,
       partners:[],
       address_to_name: {},
     }
@@ -67,6 +71,14 @@ class Web3App extends Component {
         this.setState({
           pal_ethe_instance : instance
         });
+      });
+    }
+    if (this.state.announce_instance == null)
+    {
+      const AnnounceContract = contract(Announce);
+      AnnounceContract.setProvider(this.state.web3.currentProvider);
+      AnnounceContract.deployed().then(async instance =>{
+        this.setState({announce_instance:instance});
       });
     }
 
@@ -130,18 +142,11 @@ class Web3App extends Component {
       </p>
       <Tabs>
       <TabList>
-      <Tab>Receipts</Tab>
       <Tab>Partners</Tab>
+      <Tab>Receipts</Tab>
       <Tab>Total Balance</Tab>
+      <Tab>Local Exchange</Tab>
       </TabList>
-      <TabPanel>
-      <App
-        account={this.state.account}
-        pal_ethe_instance={this.state.pal_ethe_instance}
-        partners={this.state.partners}
-        get_name={this.get_name}
-      />
-      </TabPanel>
       <TabPanel>
       <Register
         account={this.state.account}
@@ -151,10 +156,25 @@ class Web3App extends Component {
       />
       </TabPanel>
       <TabPanel>
+      <App
+        account={this.state.account}
+        pal_ethe_instance={this.state.pal_ethe_instance}
+        partners={this.state.partners}
+        get_name={this.get_name}
+      />
+      </TabPanel>
+      <TabPanel>
       <Balance
         account={this.state.account}
         pal_ethe_instance={this.state.pal_ethe_instance}
         partners={this.state.partners}
+        get_name={this.get_name}
+      />
+      </TabPanel>
+      <TabPanel>
+      <Exchange
+        account={this.state.account}
+        announce_instance={this.state.announce_instance}
         get_name={this.get_name}
       />
       </TabPanel>
