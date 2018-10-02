@@ -77,8 +77,26 @@ class Exchange extends Component {
           <div className="pure-g">
             <div className="pure-u-1-1">
             <h1>New Announcement</h1>
+            <table>
+            <tbody>
+            <tr>
+            <th>
+            Where
+            </th>
+            <td>
             <input value={this.state.where} size="32" maxLength="32" onChange={evt => this.setState({where: evt.target.value})}/>
+            </td>
+            </tr>
+            <tr>
+            <th>
+            Need
+            </th>
+            <td>
             <input value={this.state.need} type="number" onChange={evt => this.setState({need: evt.target.value})}/>
+            </td>
+            </tr>
+            </tbody>
+            </table>
             <button onClick={this.new_announcement}>Announce</button>
 
               <h1>Current Announcements</h1>
