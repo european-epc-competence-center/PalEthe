@@ -1,5 +1,5 @@
-node_modules
-build
+eecc_chain_app/node_modules
+eecc_chain_app/build
 *~
-geth/chaindata
-nohup.out
+eecc_chain_app/geth/chaindata
+*/nohup.out

@@ -4,11 +4,11 @@ WORKDIR /usr/src/app
 
 RUN npm install -g truffle
 
-COPY package.json .
+COPY eecc_chain_app/package.json .
 
 RUN npm install
 
-COPY . .
+COPY eecc_chain_app/. .
 
 RUN truffle compile
 
