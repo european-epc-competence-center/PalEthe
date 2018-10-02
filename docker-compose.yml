@@ -1,0 +1,21 @@
+version: '3'
+
+networks:
+  bc:
+
+services:
+  palethe:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - ganache
+    networks:
+      - bc
+  
+  ganache:
+    image: "trufflesuite/ganache-cli:latest"
+    ports:
+      - "8545:8545"
+    networks:
+      - bc

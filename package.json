@@ -1,6 +1,9 @@
 {
-  "name": "react-box",
-  "version": "0.1.0",
+  "name": "pal_ethe",
+  "description": "Reimplementation of the GS1 Paletten Pilot Software Stack plus added value services.",
+  "version": "0.2.0",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": "Sebastian Schmittner <sebastian.schmittner@eecc.info>",
   "private": true,
   "devDependencies": {
     "autoprefixer": "6.5.1",
@@ -61,7 +64,9 @@
     "openzeppelin-solidity": "^1.12.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
-    "react-tabs": "^2.3.0"
+    "react-tabs": "^2.3.0",
+    "truffle": "^4.1.14",
+    "zeppelin-solidity": "^1.12.0"
   },
   "scripts": {
     "start": "node scripts/start.js",
