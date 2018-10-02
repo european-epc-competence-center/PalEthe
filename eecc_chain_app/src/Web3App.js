@@ -190,6 +190,7 @@ class Web3App extends Component {
       <Explorer
         web3={this.state.web3}
         abiDecoder={abiDecoder}
+        get_name={this.get_name}
       />
       </TabPanel>
       </Tabs>

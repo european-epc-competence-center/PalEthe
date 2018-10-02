@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-const DEBUGGING_LOG=true;
+const DEBUGGING_LOG = false;
 
 
 class Explorer extends Component {
@@ -20,15 +20,17 @@ class Explorer extends Component {
             var num = this.props.web3.eth.blockNumber;
             if(DEBUGGING_LOG) console.log("number of blocks: ", num);
             var blocks = this.state.blocks;
-            for (var i = blocks.length + 1; i <= num; i++) {
+            const len = blocks.length;
+            for (var i = len + 1; i <= Math.min(num, len + 10); i++) {
                 var block = await this.props.web3.eth.getBlock(i, true);
                 if(DEBUGGING_LOG) console.log(block);
                 var transactions = [];
                 block.transactions.forEach(tx =>{
+                    var to_str = this.props.get_name(tx.from) + " called ";
                     var decoded_tx = this.props.abiDecoder.decodeMethod(tx.input);
                     if(decoded_tx && decoded_tx.name)
                     {
-                        var to_str = decoded_tx.name + "(";
+                        to_str += decoded_tx.name + "(";
                         decoded_tx.params.forEach(param =>{
                             to_str += param.name + "[" + param.type + "] = '";
                             if(param.type === "bytes32")
@@ -42,8 +44,11 @@ class Explorer extends Component {
                             to_str += "', "
                         });
                         to_str +=  ");"
-                        transactions.push(to_str);
+                    }else{
+                        to_str += "an unknown function"
                     }
+                    
+                    transactions.push(to_str);
                 });
                 if(DEBUGGING_LOG) console.log(transactions);
 
