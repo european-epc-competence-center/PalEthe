@@ -6,11 +6,14 @@ import PalEthe from '../build/contracts/PalEthe.json'
 import Partners from '../build/contracts/Partners.json'
 import Announce from '../build/contracts/Announce.json'
 
+const abiDecoder = require('abi-decoder'); // NodeJS
 
 import Register from './Register'
 import App from './App'
 import Balance from './Balance'
 import Exchange from './Exchange'
+import Explorer from './Explorer'
+
 
 import getWeb3 from './utils/getWeb3'
 
@@ -33,6 +36,10 @@ class Web3App extends Component {
       address_to_name: {},
     }
 
+      abiDecoder.addABI(PalEthe.abi);
+      abiDecoder.addABI(Partners.abi);
+      abiDecoder.addABI(Announce.abi);
+      
     this.get_name = this.get_name.bind(this);
   }
 
@@ -146,6 +153,7 @@ class Web3App extends Component {
       <Tab>Receipts</Tab>
       <Tab>Total Balance</Tab>
       <Tab>Local Exchange</Tab>
+      <Tab>Block Chain Explorer</Tab>
       </TabList>
       <TabPanel>
       <Register
@@ -176,6 +184,12 @@ class Web3App extends Component {
         account={this.state.account}
         announce_instance={this.state.announce_instance}
         get_name={this.get_name}
+      />
+      </TabPanel>
+      <TabPanel>
+      <Explorer
+        web3={this.state.web3}
+        abiDecoder={abiDecoder}
       />
       </TabPanel>
       </Tabs>

@@ -58,6 +58,7 @@
     "whatwg-fetch": "1.0.0"
   },
   "dependencies": {
+    "abi-decoder": "^1.2.0",
     "dotenv": "^2.0.0",
     "memoize": "^0.1.1",
     "memoize-one": "^4.0.2",
