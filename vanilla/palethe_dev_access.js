@@ -42,5 +42,12 @@ window.addEventListener('load', async function() {
     var blocks = await get_more_blocks(web3, abiDecoder, get_name, []);
     
     console.log(blocks);
+
+    var h = document.createElement('h1');
+    h.innerHTML="Content for EECC CHain Explorer:";
+    document.body.appendChild(h);
+    var div = document.createElement('div');
+    div.innerHTML = JSON.stringify(blocks);
+    document.body.appendChild(div);
     
     });
