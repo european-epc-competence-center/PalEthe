@@ -3,37 +3,22 @@
 This is an add-on project to the GS1 Pallettenschein
 https://www.gs1-germany.de/innovation/trendforschung/blockchain/pilot/
 
-The Participants may publish their current total balance (pairwise) any time. On top of this data, value adding services like ring exchanges can be implemented.
+The Participants may publish their current total balance (pairwise)
+any time. Mutual signatures are handled via a smart contract, which
+also keeps track of the total mutual balances at any time in a
+convenient manner. On top of this data, value adding services like
+ring exchanges can be implemented.
 
+Further more, an announcement contract is provided to announce
+informations of the form: I currently need/want to get rid of a
+certain amount (of pallets) at a certain place.  This data can be used
+as the basis for a regional pallet exchange.
 
 Run
 ---
 
 - clone this repo
 
-The simplest way to get started is just 'make' or 'make clean start' after upgrading. If you want more controll:
+- `docker-compose up`
 
-### Once
-- Install truffle `npm i -g truffle`
-
-### Update and Compile
-- `cd PalEthe`
-- `git pull`
-- `npm i`
-- `truffle compile`
-
-
-### Deploy Contracts
-- start your ethereum chain node, e.g. `truffle dev` or run ganache (https://truffleframework.com/ganache)
-- set port in `truffle.js` accordingly
-- `truffle migrate`
-
-### run tests
-```
-NODE_ENV=development truffle tests
-```
-
-### Run backend
-```
-npm start
-```
+- navigate to http://localhost:3000
