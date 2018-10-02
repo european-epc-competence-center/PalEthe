@@ -19,7 +19,7 @@ export async function get_more_blocks(web3, abiDecoder, get_name, blocks, max_ne
                     to_str += param.name + "[" + param.type + "] = '";
                     if(param.type === "bytes32")
                     {
-                        to_str += web3.toAscii(param.value);
+                        to_str += web3.toAscii(param.value).replace(/[\u0000]/g, "");
                     }
                     else
                     {
