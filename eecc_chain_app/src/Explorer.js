@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-const DEBUGGING_LOG = false;
+import { get_more_blocks } from './pure'    
 
 
 class Explorer extends Component {
@@ -13,54 +13,17 @@ class Explorer extends Component {
         }
         
     }
-    
+
     async update(){
         if (this.props.web3)
         {
-            var num = this.props.web3.eth.blockNumber;
-            if(DEBUGGING_LOG) console.log("number of blocks: ", num);
+            var web3 = this.props.web3;
+            var abiDecoder = this.props.abiDecoder;
+            var get_name = this.props.get_name;
             var blocks = this.state.blocks;
-            const len = blocks.length;
-            for (var i = len + 1; i <= Math.min(num, len + 10); i++) {
-                var block = await this.props.web3.eth.getBlock(i, true);
-                if(DEBUGGING_LOG) console.log(block);
-                var transactions = [];
-                block.transactions.forEach(tx =>{
-                    var to_str = this.props.get_name(tx.from) + " called ";
-                    var decoded_tx = this.props.abiDecoder.decodeMethod(tx.input);
-                    if(decoded_tx && decoded_tx.name)
-                    {
-                        to_str += decoded_tx.name + "(";
-                        decoded_tx.params.forEach(param =>{
-                            to_str += param.name + "[" + param.type + "] = '";
-                            if(param.type === "bytes32")
-                            {
-                                to_str += this.props.web3.toAscii(param.value);
-                            }
-                            else
-                            {
-                                to_str += param.value;
-                            }
-                            to_str += "', "
-                        });
-                        to_str +=  ");"
-                    }else{
-                        to_str += "an unknown function"
-                    }
-                    
-                    transactions.push(to_str);
-                });
-                if(DEBUGGING_LOG) console.log(transactions);
-
-                blocks.unshift(
-                    {
-                        num: i,
-                        hash: block.hash,
-                        transactions: transactions,
-                        timestamp: block.timestamp
-                    }
-                );
-            }
+            
+            blocks = await get_more_blocks(web3, abiDecoder, get_name, blocks, 10);
+            
             this.setState({blocks:blocks});
         }
         
