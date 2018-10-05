@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import { get_more_blocks } from './pure'    
+import { get_more_blocks, decoded_transaction_to_str } from './pure'    
 
 
 class Explorer extends Component {
@@ -18,15 +18,13 @@ class Explorer extends Component {
         if (this.props.web3)
         {
             var web3 = this.props.web3;
-            var abiDecoder = this.props.abiDecoder;
             var get_name = this.props.get_name;
             var blocks = this.state.blocks;
             
-            blocks = await get_more_blocks(web3, abiDecoder, get_name, blocks, 10);
+            blocks = await get_more_blocks(web3, get_name, blocks, 10);
             
             this.setState({blocks:blocks});
-        }
-        
+        }        
     }
 
   componentDidMount() {
@@ -61,12 +59,12 @@ class Explorer extends Component {
             </tr>
             {this.state.blocks.map((block) =>
             <tr key={block.hash}>
-                                   <td>{block.num}</td>
+                                   <td>{block.number}</td>
                                    <td>
                                    <ul>
                                    {
                                        block.transactions.map((tx, index) =>
-                                                              <li key={index}>{tx}</li>
+                                                              <li key={index}>{decoded_transaction_to_str(this.props.web3, tx.from, this.props.abiDecoder.decodeMethod(tx.input))}</li>
                                                              )}
                                    </ul>
                                    </td>
