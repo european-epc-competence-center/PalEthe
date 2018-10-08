@@ -147,4 +147,59 @@ class Exchange extends Component {
   }
 }
 
+//   render() {
+//     return (
+//       <div className="Balance">
+//
+//         <main className="container">
+//           <div className="pure-g">
+//             <div className="pure-u-1-1">
+//             <h1>New Announcement</h1>
+//             <table>
+//             <tbody>
+//             <tr>
+//             <th>
+//             Where
+//             </th>
+//             <td>
+//             <input value={this.state.where} size="32" maxLength="32" onChange={evt => this.setState({where: evt.target.value})}/>
+//             </td>
+//             </tr>
+//             <tr>
+//             <th>
+//             Need
+//             </th>
+//             <td>
+//             <input value={this.state.need} type="number" onChange={evt => this.setState({need: evt.target.value})}/>
+//             </td>
+//             </tr>
+//             </tbody>
+//             </table>
+//             <button onClick={this.new_announcement}>Announce</button>
+//
+//               <h1>Current Announcements</h1>
+//               <table id="announce_table">
+//               <tbody>
+//               <tr>
+//               <th>Who</th>
+//               <th>where</th>
+//               <th>Need</th>
+//               </tr>
+//               {this.state.local_needs.map((announcement) =>
+//                 <tr key={announcement.where}>
+//                 <td>{announcement.who}</td>
+//                 <td> {announcement.where}</td>
+//                 <td> {announcement.need}</td>
+//                 </tr>
+//               )}
+//               </tbody>
+//               </table>
+//               </div>
+//           </div>
+//         </main>
+//       </div>
+//     );
+//   }
+// }
+
 export default Exchange
