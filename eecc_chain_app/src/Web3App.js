@@ -34,6 +34,7 @@ class Web3App extends Component {
       announce_instance: null,
       partners:[],
       address_to_name: {},
+      only_explorer:false,
     }
 
       abiDecoder.addABI(PalEthe.abi);
@@ -57,6 +58,9 @@ class Web3App extends Component {
     getWeb3.then(results => {
       this.setState({web3: results.web3});
     });
+    var GET={};
+    window.location.search.substr(1).split("&").forEach(function(item) {GET[item.split("=")[0]] = item.split("=")[1]});
+    if(GET.only_explorer){this.setState({only_explorer:true})};
   }
 
   update(){
@@ -136,7 +140,17 @@ class Web3App extends Component {
     clearInterval(this.timer);
   }
 
-  render() {
+    render() {
+        if(this.state.only_explorer)
+        {
+          return(
+            <Explorer
+              web3={this.state.web3}
+              abiDecoder={abiDecoder}
+              get_name={this.get_name}
+            />
+          );
+        };
       return (
         <div className="container mt-4">
           <div className="row mb-3">
