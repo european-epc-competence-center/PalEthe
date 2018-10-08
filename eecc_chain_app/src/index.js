@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 
 import './css/oswald.css'
 import './css/open-sans.css'
-import './css/pure-min.css'
+import './css/bootstrap.min.css'
 
 import 'react-tabs/style/react-tabs.css';
 
