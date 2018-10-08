@@ -21,5 +21,10 @@ module.exports = {
       port: 8545,
       network_id:"*"
     },
+    "vicky": {
+      host: "192.168.20.41",
+      port: 8545,
+      network_id:"*"
+    },
   }
 };

@@ -19,8 +19,9 @@ let getWeb3 = new Promise(function(resolve, reject) {
 
       resolve(results)
     } else {
-      var provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545')
-    
+      //var provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545')
+      var provider = new Web3.providers.HttpProvider('http://192.168.20.41:8545')
+
       web3 = new Web3(provider)
 
       results = {
