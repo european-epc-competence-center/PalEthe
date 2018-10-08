@@ -21,13 +21,13 @@ const DEBUGGING_LOG=false;
 
 
 class Web3App extends Component {
-
+  
   constructor(props) {
     super(props)
-
+    
     this.state = {
       web3: null,
-      account: null,
+      account: "",
       accounts_list: [],
       pal_ethe_instance : null,
       partners_instance : null,
@@ -35,15 +35,16 @@ class Web3App extends Component {
       partners:[],
       address_to_name: {},
       only_explorer:false,
+      announce:0,
     }
-
-      abiDecoder.addABI(PalEthe.abi);
-      abiDecoder.addABI(Partners.abi);
-      abiDecoder.addABI(Announce.abi);
-
+    
+    abiDecoder.addABI(PalEthe.abi);
+    abiDecoder.addABI(Partners.abi);
+    abiDecoder.addABI(Announce.abi);
+    
     this.get_name = this.get_name.bind(this);
   }
-
+  
   // map address to name, if known, otherwise return address
   get_name(address)
   {
@@ -53,19 +54,28 @@ class Web3App extends Component {
     }
     return address;
   }
-
+  
   componentWillMount() {
     getWeb3.then(results => {
-      this.setState({web3: results.web3});
+      var new_state={web3: results.web3};
+      
+      // parse GET parameters
+      var GET={};
+      window.location.search.substr(1).split("&").forEach(function(item) {GET[item.split("=")[0]] = item.split("=")[1]});
+      
+      if(GET.only_explorer){new_state["only_explorer"]=true;};
+      if(GET.announce){new_state["announce"]=GET.announce;};
+      
+      if(DEBUGGING_LOG) console.log("new_state: ", new_state);
+      this.setState(new_state);
     });
-    var GET={};
-    window.location.search.substr(1).split("&").forEach(function(item) {GET[item.split("=")[0]] = item.split("=")[1]});
-    if(GET.only_explorer){this.setState({only_explorer:true})};
   }
-
+  
   update(){
     const contract = require('truffle-contract');
-
+    
+    if(DEBUGGING_LOG) console.log("state: ", this.state);
+    
     if (this.state.partners_instance == null)
     {
       const PartnersContract = contract(Partners);
@@ -92,8 +102,9 @@ class Web3App extends Component {
         this.setState({announce_instance:instance});
       });
     }
-
+    
     this.state.web3.eth.getAccounts(async (error, accounts) => {
+      if(DEBUGGING_LOG)console.log("accounts: ", accounts);
       if (accounts && accounts.length > 0)
       {
         this.setState({accounts_list: accounts});
@@ -102,7 +113,7 @@ class Web3App extends Component {
         }
       }
     });
-
+    
     if (this.state.partners_instance != null)
     {
       if(DEBUGGING_LOG)console.log("get registered");
@@ -129,30 +140,46 @@ class Web3App extends Component {
         if(DEBUGGING_LOG)console.log("partners: ", partners);
       });
     }
-
+    
   }
-
+  
   componentDidMount() {
     this.timer = setInterval(() => this.update(),1000);
   }
-
+  
   componentWillUnmount() {
     clearInterval(this.timer);
   }
-
-    render() {
-        if(this.state.only_explorer)
-        {
-          return(
-            <Explorer
-              web3={this.state.web3}
-              abiDecoder={abiDecoder}
-              get_name={this.get_name}
-            />
+  
+  render() {
+    
+    // announce only mode
+    if(this.state.announce && this.state.announce !== 0){
+      return(
+        <Exchange
+        account={this.state.account}
+        announce_instance={this.state.announce_instance}
+        get_name={this.get_name}
+        announce={this.state.announce}
+        />
+        );
+      }
+      
+      // explorer view
+      if(this.state.only_explorer)
+      {
+        return(
+          <Explorer
+          web3={this.state.web3}
+          abiDecoder={abiDecoder}
+          get_name={this.get_name}
+          />
           );
         };
-      return (
-        <div className="container mt-4">
+        
+        // dev mode
+        return (
+          <div className="container mt-4">
           <div className="row mb-3">
             <div className="col-auto">
               <label className="col-form-label">Active Account:</label>

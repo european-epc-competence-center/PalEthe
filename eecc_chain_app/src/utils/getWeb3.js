@@ -5,31 +5,33 @@ let getWeb3 = new Promise(function(resolve, reject) {
   window.addEventListener('load', function() {
     var results
     var web3 = window.web3
-
+    
     // Checking if Web3 has been injected by the browser (Mist/MetaMask)
     if (typeof web3 !== 'undefined') {
       // Use Mist/MetaMask's provider.
       web3 = new Web3(web3.currentProvider)
-
+      
       results = {
         web3: web3
       }
-
+      
       console.log('Injected web3 detected.');
-
+      
       resolve(results)
     } else {
-      //var provider = new Web3.providers.HttpProvider('http://127.0.0.1:8545')
-      var provider = new Web3.providers.HttpProvider('http://192.168.20.41:8545')
-
+      const IP = "127.0.0.1";
+      // const IP = "192.168.20.41"; // gin
+      const url="http://"+IP+":8545";
+      var provider = new Web3.providers.HttpProvider(url);
+      
       web3 = new Web3(provider)
-
+      
       results = {
         web3: web3
       }
-
-      console.log('No web3 instance injected, using Local web3.');
-
+      
+      console.log('No web3 instance injected, using Local web3 at ' + url);
+      
       resolve(results)
     }
   })

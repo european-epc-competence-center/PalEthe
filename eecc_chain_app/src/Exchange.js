@@ -48,6 +48,15 @@ class Exchange extends Component {
 
    }
 
+   componentWillMount() {
+     const where = "Innovation Labs";
+     if(this.props.announce && this.props.announce !== 0)
+     {
+       this.new_announcement({}, where, this.props.announce);
+       this.setState({where:where,need:this.props.announce});
+     }
+   }
+
   componentDidMount() {
     this.timer = setInterval(
       () => this.update(),
@@ -71,6 +80,21 @@ class Exchange extends Component {
 
   render() {
     let tbody;
+
+    // announce only mode
+    if(this.props.announce && this.props.announce !== 0)
+    {
+      return(
+        <div>
+        <h1>Neue Veröffentlichung auf EECC Chain</h1>
+        <p>
+        {this.state.need} Paletten werden in {this.state.where} benötigt!
+        </p>
+        </div>
+      );
+    }
+
+    // regular mode
 
     if (this.state.local_needs != null && this.state.local_needs.length !== 0) {
       tbody =
