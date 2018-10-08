@@ -64,18 +64,19 @@ class Web3App extends Component {
       window.location.search.substr(1).split("&").forEach(function(item) {GET[item.split("=")[0]] = item.split("=")[1]});
       
       if(GET.only_explorer){new_state["only_explorer"]=true;};
-      if(GET.announce){new_state["announce"]=GET.announce;};
+      if(GET.announce){
+          new_state["announce"]=GET.announce;
+        };
       
       if(DEBUGGING_LOG) console.log("new_state: ", new_state);
       this.setState(new_state);
     });
   }
-  
-  update(){
+
+  load_contracts()
+  {
     const contract = require('truffle-contract');
-    
-    if(DEBUGGING_LOG) console.log("state: ", this.state);
-    
+
     if (this.state.partners_instance == null)
     {
       const PartnersContract = contract(Partners);
@@ -102,6 +103,13 @@ class Web3App extends Component {
         this.setState({announce_instance:instance});
       });
     }
+  }
+  
+  update(){
+    
+    if(DEBUGGING_LOG) console.log("state: ", this.state);
+    
+    this.load_contracts();
     
     this.state.web3.eth.getAccounts(async (error, accounts) => {
       if(DEBUGGING_LOG)console.log("accounts: ", accounts);
@@ -114,6 +122,7 @@ class Web3App extends Component {
       }
     });
     
+    // name <-> address mappings
     if (this.state.partners_instance != null)
     {
       if(DEBUGGING_LOG)console.log("get registered");
