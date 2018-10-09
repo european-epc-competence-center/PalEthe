@@ -2,12 +2,12 @@ const DEBUGGING_LOG = false
 
 export function decoded_transaction_to_str (web3, caller, decoded_tx) {
   if (!decoded_tx || !decoded_tx.name) {
-    return caller + ' called an unknown function'
+    return caller + ': unknown function'
   }
 
-  var to_str = caller + ' called ' + decoded_tx.name + '('
+  var to_str = caller + ': ' + decoded_tx.name + '('
   decoded_tx.params.forEach(param => {
-    to_str += param.name + '[' + param.type + "] = '"
+    //to_str += param.name + '[' + param.type + "] = '"
     if (param.type === 'bytes32') {
       to_str += web3.toAscii(param.value).replace(/[\u0000]/g, '')
     } else {
