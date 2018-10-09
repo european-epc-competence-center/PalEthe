@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const DEBUGGING_LOG = false
 
@@ -19,7 +20,8 @@ class Exchange extends Component {
       where: '',
       need: 0,
       should_announce: 0,
-      announce_msg: ''
+      announce_msg: '',
+      status: ''
     }
 
     this.new_announcement = this.new_announcement.bind(this)
@@ -29,7 +31,8 @@ class Exchange extends Component {
     if (this.props.announce && this.props.announce !== 0) {
       this.setState({
         should_announce: this.props.announce,
-        announce_msg: '[...] Wird in die Block Chain geschrieben'
+        announce_msg: ' writing to EECC Block Chain',
+        status: 'writing'
       });
     }
   }
@@ -48,7 +51,8 @@ class Exchange extends Component {
         where: where,
         need: this.state.should_announce,
         should_announce: 0,
-        announce_msg: '[OK] Veröffentlicht'
+        announce_msg: ' published on EECC Block Chain',
+        status: 'published'
       })
     } else {
       this.props.announce_instance
@@ -93,17 +97,28 @@ class Exchange extends Component {
   render () {
     let tbody
 
+    let icon;
+    if(this.state.status === 'writing') {
+      icon = <FontAwesomeIcon icon="spinner" spin />
+    }
+    if(this.state.status === 'published') {
+      icon = <FontAwesomeIcon icon="check" />
+    }
     // announce only mode
     if (this.props.announce && this.props.announce !== 0) {
       return (
-        <div>
-          <h1>Neue Veröffentlichung auf EECC Chain</h1>
-          <p>
-            {this.state.need} Paletten werden in {this.state.where} benötigt!
-          </p>
-          <p>
-            {this.state.announce_msg}
-          </p>
+        <div className="container">
+          <div className='row'>
+            <div className='col-12'>
+              <img id="logo" src={require(`./blockchain_eecc_logo_md.jpg`)} className="img-responsive logo display-block" alt="EECC Blockchain Explorer"/>
+            </div>
+          </div>
+          <div className="alert alert-info" role="alert">
+            <h4 className="alert-heading">New Announcement!</h4>
+            <p>{this.state.where} needs {this.state.need} pallets!</p>
+            <hr/>
+            <p className="mb-0">{icon}{this.state.announce_msg}</p>
+          </div>
         </div>
       )
     }
@@ -115,7 +130,7 @@ class Exchange extends Component {
         <tbody>
           {this.state.local_needs.map(announcement => (
             <tr key={announcement.where}>
-              <td>{announcement.who}</td>
+              <td> {announcement.who}</td>
               <td> {announcement.where}</td>
               <td> {announcement.need}</td>
             </tr>

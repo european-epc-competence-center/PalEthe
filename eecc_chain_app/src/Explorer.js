@@ -72,12 +72,14 @@ class Explorer extends Component {
 
     return (
       <div className='Explorer'>
-        <main className='container mt-3'>
+        <div className='container mt-3'>
           <div className='row'>
             <div className='col-12'>
               <img id="logo" src={require(`./blockchain_eecc_logo_md.jpg`)} className="img-responsive logo display-block" alt="EECC Blockchain Explorer"/>
             </div>
           </div>
+        </div>
+        <div className="container-fluid">
           <div className='row mt-4'>
             <div className='col'>
               <table className='table table-sm'>
@@ -92,7 +94,7 @@ class Explorer extends Component {
               </table>
             </div>
           </div>
-        </main>
+        </div>
       </div>
     )
   }

@@ -1,6 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faSpinner, faCheck } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faSpinner, faCheck)
+
 import './css/oswald.css'
 import './css/open-sans.css'
 import './css/bootstrap.min.css'
