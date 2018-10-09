@@ -257,66 +257,6 @@ class Web3App extends Component {
       )
   }
 
-  // render() {
-  //   return (
-  //     <div>
-  //     <p>Avtive Account:
-  //     <select value={this.state.account} onChange={evt => this.setState({account: evt.target.value})}>
-  //     {this.state.accounts_list.map((account) =>
-  //       <option key={account} value={account}>{this.get_name(account)} ( {account} )</option>
-  //     )}
-  //     </select>
-  //     </p>
-  //     <Tabs>
-  //     <TabList>
-  //     <Tab>Partners</Tab>
-  //     <Tab>Receipts</Tab>
-  //     <Tab>Total Balance</Tab>
-  //     <Tab>Local Exchange</Tab>
-  //     <Tab>Block Chain Explorer</Tab>
-  //     </TabList>
-  //     <TabPanel>
-  //     <Register
-  //       account={this.state.account}
-  //       accounts_list={this.state.accounts_list}
-  //       partners={this.state.partners}
-  //       partners_instance={this.state.partners_instance}
-  //     />
-  //     </TabPanel>
-  //     <TabPanel>
-  //     <App
-  //       account={this.state.account}
-  //       pal_ethe_instance={this.state.pal_ethe_instance}
-  //       partners={this.state.partners}
-  //       get_name={this.get_name}
-  //     />
-  //     </TabPanel>
-  //     <TabPanel>
-  //     <Balance
-  //       account={this.state.account}
-  //       pal_ethe_instance={this.state.pal_ethe_instance}
-  //       partners={this.state.partners}
-  //       get_name={this.get_name}
-  //     />
-  //     </TabPanel>
-  //     <TabPanel>
-  //     <Exchange
-  //       account={this.state.account}
-  //       announce_instance={this.state.announce_instance}
-  //       get_name={this.get_name}
-  //     />
-  //     </TabPanel>
-  //     <TabPanel>
-  //     <Explorer
-  //       web3={this.state.web3}
-  //       abiDecoder={abiDecoder}
-  //       get_name={this.get_name}
-  //     />
-  //     </TabPanel>
-  //     </Tabs>
-  //     </div>
-  //   );
-  // }
 }
 
 export default Web3App
