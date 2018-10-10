@@ -40,7 +40,6 @@ class Explorer extends Component {
           {this.state.blocks.map(block => (
             <tr key={block.hash}>
               <td>{block.number}</td>
-              <td>{block.hash}</td>
               <td>
                 <ul>
                   {block.transactions.map((tx, index) => (
@@ -75,7 +74,7 @@ class Explorer extends Component {
         <div className='container mt-3'>
           <div className='row'>
             <div className='col-12'>
-              <img id="logo" src={require(`./blockchain_eecc_logo_md.jpg`)} className="img-responsive logo display-block" alt="EECC Blockchain Explorer"/>
+              <img id="logo" src={require(`./blockchain_eecc_logo_explorer.jpg`)} className="img-responsive logo display-block" alt="EECC Blockchain Explorer"/>
             </div>
           </div>
         </div>
@@ -86,7 +85,6 @@ class Explorer extends Component {
                 <thead>
                   <tr>
                     <th>Block</th>
-                    <th>Hash</th>
                     <th>Transactions</th>
                   </tr>
                 </thead>
