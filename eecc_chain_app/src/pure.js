@@ -13,7 +13,8 @@ export function decoded_transaction_to_str (web3, caller, decoded_tx) {
     } else {
       to_str += param.value
     }
-    to_str += "', "
+    //to_str += "', "
+    to_str += ", ";
   })
   to_str += ');'
 

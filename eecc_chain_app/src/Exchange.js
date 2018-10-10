@@ -27,13 +27,13 @@ class Exchange extends Component {
     this.new_announcement = this.new_announcement.bind(this)
   }
 
-  componentWillMount() {
+  componentWillMount () {
     if (this.props.announce && this.props.announce !== 0) {
       this.setState({
         should_announce: this.props.announce,
         announce_msg: ' writing to EECC Block Chain',
         status: 'writing'
-      });
+      })
     }
   }
 
@@ -45,7 +45,9 @@ class Exchange extends Component {
     }
     const where = 'Innovation Labs'
     if (this.state.should_announce !== 0) {
-      if (DEBUGGING_LOG) console.log('announce triggered by should_announce state')
+      if (DEBUGGING_LOG) {
+        console.log('announce triggered by should_announce state')
+      }
       this.new_announcement({}, where, this.state.should_announce)
       this.setState({
         where: where,
@@ -97,27 +99,49 @@ class Exchange extends Component {
   render () {
     let tbody
 
-    let icon;
-    if(this.state.status === 'writing') {
-      icon = <FontAwesomeIcon icon="spinner" spin />
+    let icon
+    if (this.state.status === 'writing') {
+      icon = <FontAwesomeIcon icon='spinner' spin />
     }
-    if(this.state.status === 'published') {
-      icon = <FontAwesomeIcon icon="check" />
+    if (this.state.status === 'published') {
+      icon = <FontAwesomeIcon icon='check' />
     }
     // announce only mode
     if (this.props.announce && this.props.announce !== 0) {
+      var verb = 'braucht'
+      var need = Math.abs(this.state.need)
+      if (this.state.need < 0) {
+        verb = 'bietet'
+      }
       return (
-        <div className="container">
+        <div className='container'>
           <div className='row'>
             <div className='col-12'>
-              <img id="logo" src={require(`./blockchain_eecc_logo_md.jpg`)} className="img-responsive logo display-block" alt="EECC Blockchain Explorer"/>
+              <img
+                id='logo'
+                src={require(`./blockchain_eecc_logo_md.jpg`)}
+                className='img-responsive logo display-block'
+                alt='EECC Blockchain'
+              />
             </div>
           </div>
-          <div className="alert alert-info" role="alert">
-            <h4 className="alert-heading">New Announcement!</h4>
-            <p>{this.state.where} needs {this.state.need} pallets!</p>
-            <hr/>
-            <p className="mb-0">{icon}{this.state.announce_msg}</p>
+          <div className='alert alert-info' role='alert'>
+            <h4 className='alert-heading'>Veröffentlichung</h4>
+            <p>
+              {' '}
+              {this.props.get_name(this.props.account)}
+              {' '}
+              {verb}
+              {' '}
+              {need}
+              {' '}
+              Paletten in
+              {' '}
+              {this.state.where}
+              !
+            </p>
+            <hr />
+            <p className='mb-0'>{icon}{this.state.announce_msg}</p>
           </div>
         </div>
       )
@@ -217,6 +241,5 @@ class Exchange extends Component {
     )
   }
 }
-
 
 export default Exchange
