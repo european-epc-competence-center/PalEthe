@@ -108,10 +108,10 @@ class Exchange extends Component {
     }
     // announce only mode
     if (this.props.announce && this.props.announce !== 0) {
-      var verb = 'braucht'
+      var verb = 'Bedarf'
       var need = Math.abs(this.state.need)
       if (this.state.need < 0) {
-        verb = 'bietet'
+        verb = 'Überschuss'
       }
       return (
         <div className='container'>
@@ -126,19 +126,12 @@ class Exchange extends Component {
             </div>
           </div>
           <div className='alert alert-info' role='alert'>
-            <h4 className='alert-heading'>Veröffentlichung</h4>
+            <h4 className='alert-heading'>Bekanntmachung</h4>
             <p>
               {' '}
               {this.props.get_name(this.props.account)}
               {' '}
-              {verb}
-              {' '}
-              {need}
-              {' '}
-              Paletten in
-              {' '}
-              {this.state.where}
-              !
+              hat in {this.state.where} einen {verb} von {need} Paletten.
             </p>
             <hr />
             <p className='mb-0'>{icon}{this.state.announce_msg}</p>
