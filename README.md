@@ -2,6 +2,9 @@
 
 This is an add-on project to the GS1 Pallettenschein
 https://www.gs1-germany.de/innovation/trendforschung/blockchain/pilot/
+.
+The aim is to only publish aggregated (pallet exchange) data on an Ethereum (type) Chain using smart contracts.
+
 
 The Participants may publish their current total balance (pairwise)
 any time. Mutual signatures are handled via a smart contract, which
