@@ -19,6 +19,8 @@ Run
 
 - clone this repo
 
+- you might want to change the web3 fallback ip in the `docker-compose.yml' (if in doubt, just remove it)
+
 - `docker-compose up`
 
 - navigate to http://localhost:3000
