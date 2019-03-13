@@ -24,3 +24,17 @@ Run
 - `docker-compose up`
 
 - navigate to http://localhost:3000
+
+Run Tests
+---------
+
+```
+cd eecc_chain_app
+truffle compile
+ganache-cli &
+truffle migrate --network geth_dev
+truffle test --network geth_dev
+NODE_ENV=test truffle test --network geth_dev
+```
+
+This is just an example, you may of course run some other local Ethereum client for your tests and choose the appropriate network.
