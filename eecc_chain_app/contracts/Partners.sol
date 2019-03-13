@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-import 'zeppelin-solidity/contracts/lifecycle/Destructible.sol';
+import "zeppelin-solidity/contracts/lifecycle/Destructible.sol";
 
 contract Partners is Destructible{
   mapping ( address => string ) public names;
