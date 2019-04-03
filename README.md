@@ -36,7 +36,6 @@ cd eecc_chain_app
 truffle compile
 ganache-cli &
 truffle migrate --network geth_dev
-truffle test --network geth_dev
 NODE_ENV=test truffle test --network geth_dev
 ```
 
