@@ -28,6 +28,8 @@ Run
 
 - navigate to http://localhost:3000
 
+The minimal UI can be used to test the contracts basic functionality.
+
 Run Tests
 ---------
 

@@ -58,6 +58,15 @@ class Register extends Component {
                 ))}
               </ul>
 
+              <h1>Unlocked Accounts</h1>
+              <ul>
+                {this.props.accounts_list.map(account => (
+                  <li key={account}>
+                    {account}
+                  </li>
+                ))}
+              </ul>
+
               <h1>Register New Partner</h1>
               <table>
                 <tbody>

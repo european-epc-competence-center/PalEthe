@@ -19,8 +19,17 @@ let getWeb3 = new Promise(function(resolve, reject) {
       
       resolve(results)
     } else {
-      const IP = "127.0.0.1";
-      // const IP = "192.168.20.41"; // gin
+        var IP = "127.0.0.1";
+      
+      var GET = {}
+      window.location.search.substr(1).split('&').forEach(function (item) {
+        GET[item.split('=')[0]] = item.split('=')[1]
+      })
+
+      if (GET.fallback_ip) {
+       IP = GET.fallback_ip;
+      }
+      
       const url="http://"+IP+":8545";
       var provider = new Web3.providers.HttpProvider(url);
       

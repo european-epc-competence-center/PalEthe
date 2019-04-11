@@ -26,5 +26,12 @@ module.exports = {
       port: 8545,
       network_id:"*"
     },
+    "quorum-7": {
+        host: "172.16.239.11",
+        port: 8545,
+        network_id:"*",
+        gasPrice: 0
+      },
+      
   }
 };

@@ -8,6 +8,7 @@ if [ ! -z "$FALLBACK_IP" ]; then
   sed -i -e "s/127\.0\.0\.1/${FALLBACK_IP}/" src/utils/getWeb3.js
 fi
 
-truffle migrate --network ganache_docker
+echo "Using truffle network ${NETWORK:=ganache_docker}"
+truffle migrate --network ${NETWORK}
 
 npm start
