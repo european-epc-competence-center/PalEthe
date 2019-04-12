@@ -20,15 +20,18 @@ as the basis for a regional pallet exchange.
 Run
 ---
 
-- clone this repo
+- Clone this repo
 
-- you might want to change the web3 fallback ip in the `docker-compose.yml' (if in doubt, just remove it)
+- You might want to change the web3 fallback ip in the `docker-compose.yml' (if in doubt, just remove it)
 
-- `docker-compose up`
+- `docker-compose up` from the main dorectory to use the ganache block chain backend
+  - Alternatively: `docker compose up -d` from the quorum subfolder to deploy the 7 nodes quorum example and run palethe on there
 
-- navigate to http://localhost:3000
+- Navigate to http://localhost:3000
+  - If you are testing quorum, naviagte to http://localhost:3000/index.html?fallback_ip=172.16.239.11 , http://localhost:3000/index.html?fallback_ip=172.16.239.12 , etc. to connect to the different quorum nodes. Each one has one unlocked account.
 
 The minimal UI can be used to test the contracts basic functionality.
+
 
 Run Tests
 ---------
