@@ -8,7 +8,15 @@ if [ ! -z "$FALLBACK_IP" ]; then
   sed -i -e "s/127\.0\.0\.1/${FALLBACK_IP}/" src/utils/getWeb3.js
 fi
 
-echo "Using truffle network ${NETWORK:=ganache_docker}"
-truffle migrate --network ${NETWORK}
+echo -e "[...]\t Using truffle network ${NETWORK:=ganache_docker}"
+
+until truffle migrate --network ${NETWORK}
+do
+  echo -e "[...]\t Migration failed... waiting for network to come up..."  
+  sleep 5
+  echo -e "[...]\t Retry..."
+done
+echo -e "[OK]\t Migration successfull!"
+
 
 npm start
