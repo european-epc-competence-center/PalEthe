@@ -22,10 +22,11 @@ Run
 
 - Clone this repo
 
-- You might want to change the web3 fallback ip in the `docker-compose.yml' (if in doubt, just remove it)
+- You might want to change the web3 fallback ip in the `docker-compose.yml` (if in doubt, just remove it)
 
-- `docker-compose up` from the main dorectory to use the ganache block chain backend
+- `docker-compose up -d` from the main dorectory to use the ganache block chain backend
   - Alternatively: `docker compose up -d` from the quorum subfolder to deploy the 7 nodes quorum example and run palethe on there
+  - Startup takes some seconds, check `docker logs -f quorum_palethe_1` for the status of SC deployment
 
 - Navigate to http://localhost:3000
   - If you are testing quorum, naviagte to http://localhost:3000/index.html?fallback_ip=172.16.239.11 , http://localhost:3000/index.html?fallback_ip=172.16.239.12 , etc. to connect to the different quorum nodes. Each one has one unlocked account.
@@ -49,7 +50,7 @@ This is just an example, you may of course run some other local Ethereum client 
 
 License
 -------
-Copyright 2018-2019 European EPC Competence Center GmbH (EECC)
+Copyright 2018-2020 Sebastian Schmittner <sebastian.schmittner@eecc.de>, European EPC Competence Center GmbH (EECC)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
